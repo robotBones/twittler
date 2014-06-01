@@ -11,27 +11,44 @@
     <script src="js/jquery.timeago.js"></script>
   </head>
   <body class='container'>
-    <div class='navbar navbar-default navbar-fixed-top'>
-      <div class='navbar-header'><h1>Twittler</h1></div>
-    </div>
+
+    <nav class='navbar navbar-default navbar-fixed-top'>
+      <div class='navbar-header'>
+        <h1 class='brand'>Twittler</h1>
+        <div class='glyphicon glyphicon-home home'></div>
+      </div>
+    </nav> <!-- end of navbar -->
+
     <div class='main row'>
-      <div class='test col-lg-3 col-md-3 col-sm-3'></div>
-      <section class='feed col-lg-6 col-md-6 col-sm-6'>
+
+      <section class='timelineUser col-lg-3 col-md-3 col-sm-4'>
+        <h2 class='tweeter'></h2>
+      </section> <!-- end of timelineUser -->
+
+      <section class='feed col-lg-6 col-md-6 col-sm-8'>
         <div class='tweet-box'>
           <a class='lead user' href="#"></a>
           <p class='message'></p>
-          <p class='timeago text-right text-muted'></p>
-        </div>
-      </section>
-    </div>
-      <div class='glyphicon glyphicon-chevron-up toTop visible-lg visible-md'></div>
+          <p class='timeago text-right text-muted'>fv</p>
+        </div> <!-- end of tweet-box -->
+      </section> <!-- end of feed -->
+
+      <div class='button col-lg-1 col-lg-offset-2 col-md-1 col-md-offset-2 glyphicon glyphicon-chevron-up toTop visible-lg visible-md'></div>
+
+    </div> <!-- end of main -->
 
     <script>
 
       $(document).ready(function(){
         var $body = $('body');
         var $feed = $('.feed');
+        var $home = $('.home');
+        var $tweeter = $('.tweeter');
         var times = document.getElementsByClassName('timeago');
+
+        // keep track of view state.
+        var inTimelineView = false;
+        var glb_tweeter = "";
 
         // cloning & caching HTML for template and then deleting original HTML from DOM
         var $toClone = $('.tweet-box');
@@ -40,10 +57,41 @@
 
         // scroll to top
         $('.toTop').click(function() {
-          $('.feed').stop().animate({scrollTop: 0});
+          $feed.stop().animate({scrollTop: 0});
         });
 
-        // background animation
+        // links to go back to main home view and remove timeline view state
+        $('.brand, .home').on('click', function() {
+          homeView();
+        });
+
+        // set inTimelineView to false, returning to main view
+        var homeView = function() {
+          inTimelineView = false;
+          $tweeter.text("");
+          $home.hide();
+          displayTweets(streams.home);
+        };
+
+        // filter and display @user's tweet timeline
+        var getTimeline = function(tweeter) {
+          $tweeter.text(tweeter);
+            var tweets = _.where(streams.home, {"user": tweeter}).reverse();
+            displayTweets(tweets)
+        };
+
+        // click listener display @user's timeline
+        $feed.on('click', '.user', function(event){
+          event.preventDefault();
+          inTimelineView = true;
+          var atUser = $(this).text();
+          var user = atUser.slice(1);
+          glb_tweeter = user;
+          $home.show();
+          getTimeline(user);
+        });
+
+        // background animation loop
         var animateCloud = function() {
           $body.animate({
             'background-position-x': '100%'
@@ -55,6 +103,7 @@
             });
         };
 
+        // implement human readable time stamps via timeago.js
         var relTime = function(dateSource) {
           if (typeof dateSource === 'object') {
             return jQuery.timeago(dateSource.created_at);
@@ -63,6 +112,7 @@
           }
         };
 
+        // construct HTML for tweets
         var buildTweet = function(tweetObj) {
           var $tweet = $tweetBox.clone();
           $tweet.find('.user').text('@' + tweetObj.user);
@@ -74,25 +124,26 @@
         };
 
         // displaying initial tweets
-        var index = streams.home.length - 1;
-        while(index >= 0){
-          var tweet = streams.home[index];
-          var $tweet = buildTweet(tweet);
-          $tweet.appendTo($feed);
-          index -= 1;
-        }
+        var displayTweets = function(tweetCollection) {
+          $feed.html("");
+          _.each(tweetCollection, function (tweet) {
+            var $tweet = buildTweet(tweet);
+            $tweet.appendTo($feed);
+          });
+        };
 
         var getLatestTweet = function() {
           return _.last(streams.home);
         };
 
-
+        // animate in a new tweet
         var showTweet = function(tweetObj) {
           var tweetHTML = buildTweet(tweetObj);
           tweetHTML.prependTo($feed).hide();
           tweetHTML.slideDown();
         }
 
+        // main loop to update tweets in view
         var mostRecent = _.last(streams.home).created_at;
         var seconds = 0;
         var updateTweetView = function() {
@@ -102,8 +153,13 @@
             // only show tweet if new.
             if ( newest.created_at !== mostRecent) {
               mostRecent = newest.created_at;
-              showTweet(newest);
+              if (inTimelineView && newest.user === glb_tweeter) {
+                showTweet(newest);
+              } else if (!inTimelineView) {
+                  showTweet(newest);
+              }
             }
+            // update human readable timestamps every minute
             if (seconds === 60) {
               seconds = 0;
               _(times).each(function (el) {
@@ -116,6 +172,8 @@
           }, 1000);
         }
 
+        $home.hide();
+        displayTweets(streams.home);
         animateCloud();
         updateTweetView();
 
