@@ -30,6 +30,25 @@ body {
     text-align: center;
 }
 
-.timeago {
-    color: gray;
+.main {
+    position: relative;
+}
+
+.toTop {
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    padding: 16px;
+    font-size: 5em;
+    color: white;
+    opacity: 0.3;
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px 2px rgba(11,48,48,0.1);
+}
+
+.toTop:hover {
+    opacity: 0.6;
+    box-shadow: 0px 0px 15px 2px rgba(11,48,48,0.6);
 }

@@ -11,14 +11,15 @@
   </head>
   <body class='container'>
     <div class='main row'>
-      <div class='test col-lg-3'></div>
-      <section class='feed col-lg-6'>
+      <div class='test col-lg-3 col-md-3 col-sm-3'></div>
+      <section class='feed col-lg-6 col-md-6 col-sm-6'>
         <div class='tweet-box'>
           <a class='lead user' href="#"></a>
           <p class='message'></p>
-          <p class='timeago text-right'></p>
+          <p class='timeago text-right text-muted'></p>
         </div>
       </section>
+      <div class='glyphicon glyphicon-chevron-up toTop visible-lg visible-md'></div>
     </div>
 
     <script>
@@ -95,6 +96,10 @@
         }
 
         updateTweetView();
+
+        $('.toTop').click(function() {
+          $('.feed').stop().animate({scrollTop: 0});
+        });
       });
 
     </script>
