@@ -19,13 +19,14 @@
       $(document).ready(function(){
         var $body = $('body');
         var $feed = $('.feed');
+        var tweetBox = '<div class=\'tweet-box\'></div>';
 
         $feed.html('');
 
         var index = streams.home.length - 1;
         while(index >= 0){
           var tweet = streams.home[index];
-          var $tweet = $('<div class=\'tweet-box\'></div>');
+          var $tweet = $(tweetBox);
           $tweet.text('@' + tweet.user + ': ' + tweet.message);
           $tweet.appendTo($feed);
           index -= 1;
@@ -37,9 +38,12 @@
             return _.last(streams.home);
           };
 
-          var showTweet = function(tweetObj) {
-            var $tweet = $('<div class=\'tweet-box\'></div>');
+          var buildTweet = function(tweetObj) {
+            var $tweet = $(tweetBox);
             $tweet.text('@' + tweetObj.user + ': ' + tweetObj.message);
+          };
+
+          var showTweet = function(tweetHTML) {
             $tweet.prependTo($feed).hide();
             $tweet.slideDown();
           }
@@ -51,8 +55,6 @@
               if ( lastTweet.created_at !== latest_tweet) {
                 latest_tweet = lastTweet.created_at;
                 showTweet(lastTweet);
-                // // maintain a fixed amount of visible tweets.
-                // $main.children().last().remove();
               }
               updateTweetView();
             }, 1000);

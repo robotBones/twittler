@@ -1,11 +1,15 @@
 html {
+    /*match bg.png color */
+    background: rgb(194, 222, 236);
     background-image: url('bg.png');
-    background-size: cover;
+    /* just load bg on top half*/
+    background-size: 400%;
+    background-repeat: no-repeat;
 }
 
 body {
-    overflow: hidden;
     background-color: rgba(255,255,255,0);
+    overflow: hidden;
 }
 
 .feed {
@@ -15,7 +19,7 @@ body {
 
 .feed > .tweet-box {
     height: 80px;
-    margin: 10px 0px;
+    margin: 0px 0px 10px 0px;
     border-radius: 10px;
     background-color: rgba(255,255,255,0.4);
 }
