@@ -3,6 +3,7 @@
   <head>
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
+    <script src="underscore-min.js"></script>
   </head>
   <body>
     <script>
@@ -20,6 +21,31 @@
           index -= 1;
         }
 
+          var latest_tweet = _.last(streams.home).created_at;
+
+          var getLatestTweet = function() {
+            return _.last(streams.home);
+          };
+
+          var showTweet = function(tweetObj) {
+            var $tweet = $('<div></div>');
+            $tweet.text('@' + tweetObj.user + ': ' + tweetObj.message);
+            $tweet.appendTo($body);
+          }
+
+          var updateTweetView = function() {
+            setTimeout(function waitForTweet() {
+              var lastTweet = getLatestTweet();
+              // only show tweet if new.
+              if ( lastTweet.created_at !== latest_tweet) {
+                latest_tweet = lastTweet.created_at;
+                showTweet(lastTweet);
+              }
+              updateTweetView();
+            }, 1000);
+          }
+
+          updateTweetView();
       });
 
     </script>
