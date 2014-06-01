@@ -40,7 +40,8 @@
           var showTweet = function(tweetObj) {
             var $tweet = $('<div class=\'tweet-box\'></div>');
             $tweet.text('@' + tweetObj.user + ': ' + tweetObj.message);
-            $tweet.prependTo($feed);
+            $tweet.prependTo($feed).hide();
+            $tweet.slideDown();
           }
 
           var updateTweetView = function() {
