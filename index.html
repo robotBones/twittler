@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Twittler</title>
     <link rel="stylesheet" href="css/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="css/my.css">
@@ -10,6 +11,9 @@
     <script src="js/jquery.timeago.js"></script>
   </head>
   <body class='container'>
+    <div class='navbar navbar-default navbar-fixed-top'>
+      <div class='navbar-header'><h1>Twittler</h1></div>
+    </div>
     <div class='main row'>
       <div class='test col-lg-3 col-md-3 col-sm-3'></div>
       <section class='feed col-lg-6 col-md-6 col-sm-6'>
@@ -19,8 +23,8 @@
           <p class='timeago text-right text-muted'></p>
         </div>
       </section>
-      <div class='glyphicon glyphicon-chevron-up toTop visible-lg visible-md'></div>
     </div>
+      <div class='glyphicon glyphicon-chevron-up toTop visible-lg visible-md'></div>
 
     <script>
 
@@ -29,10 +33,28 @@
         var $feed = $('.feed');
         var times = document.getElementsByClassName('timeago');
 
-        // cloning & caching an HTML template and then deleting that template from DOM
+        // cloning & caching HTML for template and then deleting original HTML from DOM
         var $toClone = $('.tweet-box');
         var $tweetBox = $toClone.clone();
         $toClone.remove();
+
+        // scroll to top
+        $('.toTop').click(function() {
+          $('.feed').stop().animate({scrollTop: 0});
+        });
+
+        var animateCloud = function() {
+          $body.animate({
+            'background-position-x': '100%'
+            }, 100000,
+            'linear',
+            function(){
+              $body.css('background-position-x', '0%');
+              animateCloud();
+            });
+        };
+
+        animateCloud();
 
         var relTime = function(dateSource) {
           if (typeof dateSource === 'object') {
@@ -97,9 +119,6 @@
 
         updateTweetView();
 
-        $('.toTop').click(function() {
-          $('.feed').stop().animate({scrollTop: 0});
-        });
       });
 
     </script>

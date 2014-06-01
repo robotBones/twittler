@@ -1,14 +1,11 @@
-html {
+body {
     /*match bg.png color */
     background: rgb(194, 222, 236);
     background-image: url('../img/bg.png');
     /* just load bg on top half*/
-    background-size: 200%;
     background-repeat: no-repeat;
-}
-
-body {
-    background-color: rgba(255,255,255,0);
+    background-size: 200%;
+    background-position: 0% 10%;
     overflow: hidden;
 }
 
@@ -30,14 +27,15 @@ body {
     text-align: center;
 }
 
-.main {
-    position: relative;
+.navbar-header {
+    margin: 0px 0px 10px 20px;
+}
+
+.navbar-default{
+    background-image: linear-gradient(to bottom,#D3E8EC 0,#f8f8f8 100%)
 }
 
 .toTop {
-    position: fixed;
-    top: 10px;
-    right: 20px;
     padding: 16px;
     font-size: 5em;
     color: white;
