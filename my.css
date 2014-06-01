@@ -3,7 +3,7 @@ html {
     background: rgb(194, 222, 236);
     background-image: url('bg.png');
     /* just load bg on top half*/
-    background-size: 400%;
+    background-size: 200%;
     background-repeat: no-repeat;
 }
 
