@@ -41,11 +41,13 @@
           var buildTweet = function(tweetObj) {
             var $tweet = $(tweetBox);
             $tweet.text('@' + tweetObj.user + ': ' + tweetObj.message);
+            return $tweet;
           };
 
-          var showTweet = function(tweetHTML) {
-            $tweet.prependTo($feed).hide();
-            $tweet.slideDown();
+          var showTweet = function(tweetObj) {
+            var tweetHTML = buildTweet(tweetObj);
+            tweetHTML.prependTo($feed).hide();
+            tweetHTML.slideDown();
           }
 
           var updateTweetView = function() {
