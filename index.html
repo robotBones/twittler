@@ -16,7 +16,7 @@
         <div class='tweet-box'>
           <a class='lead user' href="#"></a>
           <p class='message'></p>
-          <p class='timeago text-right'>csdc</p>
+          <p class='timeago text-right'></p>
         </div>
       </section>
     </div>
@@ -26,16 +26,28 @@
       $(document).ready(function(){
         var $body = $('body');
         var $feed = $('.feed');
+        var times = document.getElementsByClassName('timeago');
 
         // cloning & caching an HTML template and then deleting that template from DOM
         var $toClone = $('.tweet-box');
         var $tweetBox = $toClone.clone();
         $toClone.remove();
 
+        var relTime = function(dateSource) {
+          if (typeof dateSource === 'object') {
+            return jQuery.timeago(dateSource.created_at);
+          } else {
+            return jQuery.timeago(dateSource);
+          }
+        };
+
         var buildTweet = function(tweetObj) {
           var $tweet = $tweetBox.clone();
           $tweet.find('.user').text('@' + tweetObj.user);
           $tweet.find('.message').text(tweetObj.message);
+          $tweet.find('.timeago')
+            .data("date", tweetObj.created_at)
+            .text( relTime(tweetObj) );
           return $tweet;
         };
 
@@ -60,13 +72,23 @@
         }
 
         var mostRecent = _.last(streams.home).created_at;
+        var seconds = 0;
         var updateTweetView = function() {
           setTimeout(function waitForTweet() {
+            seconds += 1;
             var newest = getLatestTweet();
             // only show tweet if new.
             if ( newest.created_at !== mostRecent) {
               mostRecent = newest.created_at;
               showTweet(newest);
+            }
+            if (seconds === 60) {
+              seconds = 0;
+              _(times).each(function (el) {
+                $el = $(el);
+                date = +$el.data('date');
+                $el.text( relTime(date) );
+              });
             }
             updateTweetView();
           }, 1000);
