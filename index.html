@@ -3,27 +3,31 @@
   <head>
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="my.css">
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
     <script src="underscore-min.js"></script>
   </head>
-  <body>
-    <section class='main container col-lg-01'></section>
+  <body class='container'>
+    <div class='row'>
+      <div class='test col-lg-3'></div>
+      <section class='feed col-lg-6'></section>
+    </div>
 
     <script>
 
       $(document).ready(function(){
         var $body = $('body');
-        var $main = $('.main');
+        var $feed = $('.feed');
 
-        $main.html('');
+        $feed.html('');
 
         var index = streams.home.length - 1;
         while(index >= 0){
           var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
+          var $tweet = $('<div class=\'tweet-box\'></div>');
           $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo($main);
+          $tweet.appendTo($feed);
           index -= 1;
         }
 
@@ -34,9 +38,9 @@
           };
 
           var showTweet = function(tweetObj) {
-            var $tweet = $('<div></div>');
+            var $tweet = $('<div class=\'tweet-box\'></div>');
             $tweet.text('@' + tweetObj.user + ': ' + tweetObj.message);
-            $tweet.prependTo($main);
+            $tweet.prependTo($feed);
           }
 
           var updateTweetView = function() {

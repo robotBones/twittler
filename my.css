@@ -1,0 +1,16 @@
+body {
+    overflow: hidden;
+    background-image: url('bg.png');
+    background-size: cover;
+}
+
+.feed {
+    height: 800px;
+    overflow: scroll;
+}
+
+.feed > .tweet-box {
+    height: 50px;
+    border-radius: 10px;
+    background-color: rgba(256,256,256,0.4);
+}
