@@ -43,6 +43,7 @@
           $('.feed').stop().animate({scrollTop: 0});
         });
 
+        // background animation
         var animateCloud = function() {
           $body.animate({
             'background-position-x': '100%'
@@ -53,8 +54,6 @@
               animateCloud();
             });
         };
-
-        animateCloud();
 
         var relTime = function(dateSource) {
           if (typeof dateSource === 'object') {
@@ -117,6 +116,7 @@
           }, 1000);
         }
 
+        animateCloud();
         updateTweetView();
 
       });

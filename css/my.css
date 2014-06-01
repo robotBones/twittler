@@ -36,6 +36,9 @@ body {
 }
 
 .toTop {
+    position: absolute;
+    top: 100px;
+    right: 5%;
     padding: 16px;
     font-size: 5em;
     color: white;
