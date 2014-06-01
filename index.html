@@ -7,11 +7,18 @@
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
     <script src="underscore-min.js"></script>
+    <script src="jquery.timeago.js"></script>
   </head>
   <body class='container'>
     <div class='main row'>
       <div class='test col-lg-3'></div>
-      <section class='feed col-lg-6'></section>
+      <section class='feed col-lg-6'>
+        <div class='tweet-box'>
+          <a class='lead user' href="#"></a>
+          <p class='message'></p>
+          <p class='timeago text-right'>csdc</p>
+        </div>
+      </section>
     </div>
 
     <script>
@@ -19,50 +26,53 @@
       $(document).ready(function(){
         var $body = $('body');
         var $feed = $('.feed');
-        var tweetBox = '<div class=\'tweet-box\'></div>';
 
-        $feed.html('');
+        // cloning & caching an HTML template and then deleting that template from DOM
+        var $toClone = $('.tweet-box');
+        var $tweetBox = $toClone.clone();
+        $toClone.remove();
 
+        var buildTweet = function(tweetObj) {
+          var $tweet = $tweetBox.clone();
+          $tweet.find('.user').text('@' + tweetObj.user);
+          $tweet.find('.message').text(tweetObj.message);
+          return $tweet;
+        };
+
+        // displaying initial tweets
         var index = streams.home.length - 1;
         while(index >= 0){
           var tweet = streams.home[index];
-          var $tweet = $(tweetBox);
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
+          var $tweet = buildTweet(tweet);
           $tweet.appendTo($feed);
           index -= 1;
         }
 
-          var latest_tweet = _.last(streams.home).created_at;
+        var getLatestTweet = function() {
+          return _.last(streams.home);
+        };
 
-          var getLatestTweet = function() {
-            return _.last(streams.home);
-          };
 
-          var buildTweet = function(tweetObj) {
-            var $tweet = $(tweetBox);
-            $tweet.text('@' + tweetObj.user + ': ' + tweetObj.message);
-            return $tweet;
-          };
+        var showTweet = function(tweetObj) {
+          var tweetHTML = buildTweet(tweetObj);
+          tweetHTML.prependTo($feed).hide();
+          tweetHTML.slideDown();
+        }
 
-          var showTweet = function(tweetObj) {
-            var tweetHTML = buildTweet(tweetObj);
-            tweetHTML.prependTo($feed).hide();
-            tweetHTML.slideDown();
-          }
+        var mostRecent = _.last(streams.home).created_at;
+        var updateTweetView = function() {
+          setTimeout(function waitForTweet() {
+            var newest = getLatestTweet();
+            // only show tweet if new.
+            if ( newest.created_at !== mostRecent) {
+              mostRecent = newest.created_at;
+              showTweet(newest);
+            }
+            updateTweetView();
+          }, 1000);
+        }
 
-          var updateTweetView = function() {
-            setTimeout(function waitForTweet() {
-              var lastTweet = getLatestTweet();
-              // only show tweet if new.
-              if ( lastTweet.created_at !== latest_tweet) {
-                latest_tweet = lastTweet.created_at;
-                showTweet(lastTweet);
-              }
-              updateTweetView();
-            }, 1000);
-          }
-
-          updateTweetView();
+        updateTweetView();
       });
 
     </script>
