@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
     <script src="underscore-min.js"></script>
@@ -30,7 +32,7 @@
           var showTweet = function(tweetObj) {
             var $tweet = $('<div></div>');
             $tweet.text('@' + tweetObj.user + ': ' + tweetObj.message);
-            $tweet.appendTo($body);
+            $tweet.prependTo($body);
           }
 
           var updateTweetView = function() {
@@ -40,6 +42,8 @@
               if ( lastTweet.created_at !== latest_tweet) {
                 latest_tweet = lastTweet.created_at;
                 showTweet(lastTweet);
+                // maintain a fixed amount of visible tweets.
+                $body.children().last().remove();
               }
               updateTweetView();
             }, 1000);
