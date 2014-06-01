@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.min.css">
     <script src="jquery.js"></script>
     <script src="data_generator.js"></script>
     <script src="underscore-min.js"></script>
   </head>
   <body>
+    <section class='main container col-lg-01'></section>
+
     <script>
 
       $(document).ready(function(){
         var $body = $('body');
-        $body.html('');
+        var $main = $('.main');
+
+        $main.html('');
 
         var index = streams.home.length - 1;
         while(index >= 0){
           var tweet = streams.home[index];
           var $tweet = $('<div></div>');
           $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo($body);
+          $tweet.appendTo($main);
           index -= 1;
         }
 
@@ -32,7 +36,7 @@
           var showTweet = function(tweetObj) {
             var $tweet = $('<div></div>');
             $tweet.text('@' + tweetObj.user + ': ' + tweetObj.message);
-            $tweet.prependTo($body);
+            $tweet.prependTo($main);
           }
 
           var updateTweetView = function() {
@@ -42,8 +46,8 @@
               if ( lastTweet.created_at !== latest_tweet) {
                 latest_tweet = lastTweet.created_at;
                 showTweet(lastTweet);
-                // maintain a fixed amount of visible tweets.
-                $body.children().last().remove();
+                // // maintain a fixed amount of visible tweets.
+                // $main.children().last().remove();
               }
               updateTweetView();
             }, 1000);
