@@ -79,8 +79,7 @@
         // filter and display @user's tweet timeline
         var getTimeline = function(tweeter) {
           $tweeter.text(tweeter);
-            var tweets = _.where(streams.home, {"user": tweeter}).reverse();
-            displayTweets(tweets)
+            displayTweets(streams.users[tweeter]);
         };
 
         // click listener display @user's timeline
@@ -131,7 +130,7 @@
           $feed.html("");
           _.each(tweetCollection, function (tweet) {
             var $tweet = buildTweet(tweet);
-            $tweet.appendTo($feed);
+            $tweet.prependTo($feed);
           });
         };
 
