@@ -5,7 +5,7 @@ body {
     /* just load bg on top half*/
     background-repeat: no-repeat;
     background-size: 200%;
-    background-position: 0px 200px;
+    background-position: 0px 75px;
     overflow: hidden;
 }
 
@@ -41,7 +41,7 @@ nav {
 }
 
 .main {
-    margin-top: 220px
+    margin-top: 90px;
 }
 
 .feed {
