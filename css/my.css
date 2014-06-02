@@ -5,17 +5,17 @@ body {
     /* just load bg on top half*/
     background-repeat: no-repeat;
     background-size: 200%;
-    background-position: 0% 10%;
+    background-position: 0px 200px;
     overflow: hidden;
 }
 
-.navbar-header {
-    margin: 0px 0px 10px 20px;
-    width: 200px;
+nav {
+    height: 75px;
 }
 
 .brand {
     display: inline-block;
+    margin: 6%;
 }
 
 .brand:hover {
@@ -36,8 +36,12 @@ body {
     background-image: linear-gradient(to bottom,#D3E8EC 0,#f8f8f8 100%);
 }
 
+.tweet-put {
+    margin-top: 2%;
+}
+
 .main {
-    margin-top: 10%
+    margin-top: 220px
 }
 
 .feed {
