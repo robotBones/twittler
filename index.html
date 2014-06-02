@@ -46,6 +46,7 @@
         var $feed = $('.feed');
         var $home = $('.home');
         var $tweeter = $('.tweeter');
+        var $toTop = $('.toTop');
         var times = document.getElementsByClassName('timeago');
 
         // keep track of view state.
@@ -58,13 +59,16 @@
         $toClone.remove();
 
         // scroll to top
-        $('.toTop').on('click', function() {
+        $toTop.on('click', function() {
           $feed.stop().animate({scrollTop: 0});
         });
 
         // links to go back to main home view and remove timeline view state
         $('.brand, .home').on('click', function() {
-          homeView();
+          if (inTimelineView) {
+            homeView();
+          }
+          $toTop.click();
         });
 
         // set inTimelineView to false, returning to main view
