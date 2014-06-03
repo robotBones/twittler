@@ -64,7 +64,7 @@
         var $toTop = $('.toTop');
         var $tweetPut = $('.tweet-put')
         var $sendBtn = $('.send');
-        var times = document.getElementsByClassName('timeago');
+        var timeEls = document.getElementsByClassName('timeago');
         window.visitor = 'YourMom';
         streams.users[visitor] = [];
 
@@ -82,6 +82,17 @@
         $toTop.on('click', function() {
           $body.stop().animate({scrollTop:0}, '500', 'swing');
           animateCloud();
+        });
+
+        // click listener display @user's timeline
+        $feed.on('click', '.user', function(event){
+          event.preventDefault();
+          // extract @user and remove "@"
+          userToStalk = $(this).text().slice(1);
+          // change the view
+          inTimelineView = true;
+          $home.show();
+          toTimelineView(userToStalk);
         });
 
         // links to go back to main home view and remove timeline view state.
@@ -102,9 +113,10 @@
             $tweetPut.attr('placeholder', "write something");
           } else {
             writeTweet(input);
-            // adding creation date to added date after it's tweet obj is created.
+            // adding creation date to added date after it's tweet obj is created which
+            // I think should have been in writeTweet() to begin with.
             _.last(streams.users[visitor]).created_at = new Date();
-            $tweetPut.attr('placeholder', "").val("").focus();
+            $tweetPut.attr('placeholder', "Please, may I have another?").val("").focus();
           }
         });
 
@@ -123,16 +135,6 @@
             displayTweets(streams.users[tweeter]);
         };
 
-        // click listener display @user's timeline
-        $feed.on('click', '.user', function(event){
-          event.preventDefault();
-          // extract @user and remove "@"
-          userToStalk = $(this).text().slice(1);
-          // change the view
-          inTimelineView = true;
-          $home.show();
-          toTimelineView(userToStalk);
-        });
 
         // background animation loop
         var animateCloud = function() {
@@ -147,8 +149,9 @@
         };
 
         // implement human readable time stamps via timeago.js
-        var relTime = function(dateSource) {
+        var useTimeago = function(dateSource) {
           if (typeof dateSource === 'object') {
+            //timeago() won't take a date object
             return jQuery.timeago(dateSource.created_at);
           } else {
             return jQuery.timeago(dateSource);
@@ -161,8 +164,8 @@
           $tweet.find('.user').text('@' + tweetObj.user);
           $tweet.find('.message').text(tweetObj.message);
           $tweet.find('.timeago')
-            .data("date", tweetObj.created_at)
-            .text( relTime(tweetObj) );
+            .data("date", tweetObj.created_at)// this
+            .text( useTimeago(tweetObj) );
           return $tweet;
         };
 
@@ -175,8 +178,19 @@
           });
         };
 
-        var getLatestTweet = function() {
-          return _.last(streams.home);
+        var mostRecent = _.last(streams.home).created_at;
+        var getLatestTweets = function() {
+          var newTweets = [];
+          for (var i = streams.home.length-1; i >= 0; i--) {
+            if (streams.home[i].created_at > mostRecent) {
+              newTweets.unshift(streams.home[i]);
+            }
+            else {
+              break;
+            }
+          }
+          mostRecent = _.last(streams.home).created_at;
+          return newTweets;
         };
 
         // animate in a new tweet
@@ -187,34 +201,36 @@
         }
 
         // main loop to update tweets in view
-        var mostRecent = _.last(streams.home).created_at;
-        var seconds = 0;
+        var lastTime = new Date();
+        var thisTime = new Date();
         var updateTweetView = function() {
           setTimeout(function waitForTweet() {
-            seconds += 1;
-            var newest = getLatestTweet();
+            var newest = getLatestTweets();
             // only show tweet if new.
-            if ( newest.created_at !== mostRecent) {
-              mostRecent = newest.created_at;
-              if (inTimelineView && newest.user === userToStalk) {
-                showTweet(newest);
+            _(newest).each(function (newTweet) {
+              if (inTimelineView && newTweet.user === userToStalk) {
+                showTweet(newTweet);
               } else if (!inTimelineView) {
-                  showTweet(newest);
+                showTweet(newTweet);
               }
-            }
+            });
             // update human readable timestamps every minute
-            if (seconds === 60) {
-              seconds = 0;
-              _(times).each(function (el) {
+            thisTime = new Date();
+            console.log(thisTime - lastTime);
+            if (thisTime - lastTime >= 60000) {
+              _(timeEls).each(function (el) {
                 $el = $(el);
+                //jQuery.timeago.js won't take a date object.
                 date = +$el.data('date');
-                $el.text( relTime(date) );
+                $el.text( useTimeago(date) );
+                lastTime = thisTime;
               });
             }
             updateTweetView();
           }, 1000);
         }
 
+        // invoking application
         $home.hide();
         displayTweets(streams.home);
         animateCloud();
