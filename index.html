@@ -44,7 +44,7 @@
         </div>    <!-- end of tweet-box -->
       </section> <!-- end of feed -->
 
-      <div class='button col-lg-1 col-lg-offset-2 col-md-1 col-md-offset-2 toTop visible-lg visible-md'>
+      <div class='toTop btn-glass col-lg-1 col-lg-offset-2 col-md-1 col-md-offset-2 visible-lg visible-md'>
         <span class='glyphicon glyphicon-chevron-up'></span>
       </div> <!-- end of scroll-to-top button -->
 
@@ -80,7 +80,8 @@
 
         // scroll to top
         $toTop.on('click', function() {
-          $feed.stop().animate({scrollTop: 0});
+          $body.stop().animate({scrollTop:0}, '500', 'swing');
+          animateCloud();
         });
 
         // links to go back to main home view and remove timeline view state.
