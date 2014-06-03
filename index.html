@@ -80,7 +80,7 @@
 
         // scroll to top
         $toTop.on('click', function() {
-          $body.stop().animate({scrollTop:0}, '500', 'swing');
+          $body.stop().animate({scrollTop:0}, 'swing');
           animateCloud();
         });
 
@@ -143,7 +143,7 @@
             }, 100000,
             'linear',
             function(){
-              $body.css('background-position-x', '0%');
+              $body.css('background-position-x', '0px');
               animateCloud();
             });
         };
@@ -216,7 +216,6 @@
             });
             // update human readable timestamps every minute
             thisTime = new Date();
-            console.log(thisTime - lastTime);
             if (thisTime - lastTime >= 60000) {
               _(timeEls).each(function (el) {
                 $el = $(el);
