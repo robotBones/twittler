@@ -18,10 +18,10 @@
           </div> <!-- end of brand logo and home link -->
 
           <div class="col-lg-6 col-md-6 col-sm-8">
-            <div class="tweet-put input-group input-group-lg">
-              <input type="text" class="form-control">
+            <div class="tweet-put-group input-group input-group-lg">
+              <input type="text" class="form-control tweet-put" name='incomingTweet' placeholder='thought vomit goes here'>
               <span class="input-group-btn">
-                <button class="btn btn-default" type="button">Go!</button>
+                <button class="send btn btn-default" type="button">Flush</button>
               </span>
             </div>
           </div> <!-- end of input-group -->
@@ -38,10 +38,10 @@
 
       <section class='feed col-lg-6 col-md-6 col-sm-8'>
         <div class='tweet-box'>
-          <a class='lead user' href="#"></a>
-          <p class='message'></p>
-          <p class='timeago text-right text-muted'>fv</p>
-        </div> <!-- end of tweet-box -->
+          <a class='lead user' href="#">@YourMom...</a>
+          <p class='message'>Light Bulb flickering...</p>
+          <p class='timeago text-right text-muted'>Time is an Ocean...</p>
+        </div>    <!-- end of tweet-box -->
       </section> <!-- end of feed -->
 
       <div class='button col-lg-1 col-lg-offset-2 col-md-1 col-md-offset-2 toTop visible-lg visible-md'>
@@ -56,17 +56,21 @@
     <script src="js/jquery.timeago.js"></script>
     <script>
 
-      $(document).ready(function(){
+      $(document).ready(function() {
         var $body = $('body');
         var $feed = $('.feed');
         var $home = $('.home');
         var $tweeter = $('.tweeter');
         var $toTop = $('.toTop');
+        var $tweetPut = $('.tweet-put')
+        var $sendBtn = $('.send');
         var times = document.getElementsByClassName('timeago');
+        window.visitor = 'YourMom';
+        streams.users[visitor] = [];
 
         // keep track of view state.
         var inTimelineView = false;
-        var glb_tweeter = "";
+        var userToStalk = "";
 
         // cloning & caching HTML for template and then deleting original HTML from DOM
         var $toClone = $('.tweet-box');
@@ -78,7 +82,8 @@
           $feed.stop().animate({scrollTop: 0});
         });
 
-        // links to go back to main home view and remove timeline view state
+        // links to go back to main home view and remove timeline view state.
+        // it leverages the click listener already on $toTop.
         $('.brand, .home').on('click', function() {
           if (inTimelineView) {
             homeView();
@@ -86,10 +91,23 @@
           $toTop.click();
         });
 
+        $sendBtn.on('click', function (event) {
+          event.preventDefault();
+          var input = $tweetPut.val();
+          if (input === "") {
+            $tweetPut.attr('placeholder', "write something");
+          } else {
+            writeTweet(input);
+            // adding creation date to added date after it's tweet obj is created.
+            _.last(streams.users[visitor]).created_at = new Date();
+            $tweetPut.attr('placeholder', "").val("").focus();
+          }
+        });
+
         // set inTimelineView to false, returning to main view
         var homeView = function() {
           inTimelineView = false;
-          glb_tweeter = "";
+          userToStalk = "";
           $tweeter.text("");
           $home.hide();
           displayTweets(streams.home);
@@ -107,7 +125,7 @@
           inTimelineView = true;
           var atUser = $(this).text();
           var user = atUser.slice(1);
-          glb_tweeter = user;
+          userToStalk = user;
           $home.show();
           getTimeline(user);
         });
@@ -174,7 +192,7 @@
             // only show tweet if new.
             if ( newest.created_at !== mostRecent) {
               mostRecent = newest.created_at;
-              if (inTimelineView && newest.user === glb_tweeter) {
+              if (inTimelineView && newest.user === userToStalk) {
                 showTweet(newest);
               } else if (!inTimelineView) {
                   showTweet(newest);
