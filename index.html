@@ -73,6 +73,7 @@
         var userToStalk = "";
 
         // cloning & caching HTML for template and then deleting original HTML from DOM
+        // because mixing HTML in javascript confuses me.
         var $toClone = $('.tweet-box');
         var $tweetBox = $toClone.clone();
         $toClone.remove();
@@ -86,13 +87,15 @@
         // it leverages the click listener already on $toTop.
         $('.brand, .home').on('click', function() {
           if (inTimelineView) {
-            homeView();
+            toHomeView();
           }
           $toTop.click();
         });
 
+        // for sending tweets
         $sendBtn.on('click', function (event) {
           event.preventDefault();
+
           var input = $tweetPut.val();
           if (input === "") {
             $tweetPut.attr('placeholder', "write something");
@@ -105,7 +108,7 @@
         });
 
         // set inTimelineView to false, returning to main view
-        var homeView = function() {
+        var toHomeView = function() {
           inTimelineView = false;
           userToStalk = "";
           $tweeter.text("");
@@ -114,7 +117,7 @@
         };
 
         // filter and display @user's tweet timeline
-        var getTimeline = function(tweeter) {
+        var toTimelineView = function(tweeter) {
           $tweeter.text(tweeter);
             displayTweets(streams.users[tweeter]);
         };
@@ -122,12 +125,12 @@
         // click listener display @user's timeline
         $feed.on('click', '.user', function(event){
           event.preventDefault();
+          // extract @user and remove "@"
+          userToStalk = $(this).text().slice(1);
+          // change the view
           inTimelineView = true;
-          var atUser = $(this).text();
-          var user = atUser.slice(1);
-          userToStalk = user;
           $home.show();
-          getTimeline(user);
+          toTimelineView(userToStalk);
         });
 
         // background animation loop
