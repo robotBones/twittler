@@ -57,7 +57,8 @@
     <script>
 
       $(document).ready(function() {
-        var $body = $('body');
+        var $bg = $('body');
+        var $overflow = $('html, body');
         var $feed = $('.feed');
         var $home = $('.home');
         var $tweeter = $('.tweeter');
@@ -80,7 +81,7 @@
 
         // scroll to top
         $toTop.on('click', function() {
-          $body.stop().animate({scrollTop:0}, 'swing');
+          $overflow.stop().animate({scrollTop:0}, 'swing');
           animateCloud();
         });
 
@@ -135,15 +136,14 @@
             displayTweets(streams.users[tweeter]);
         };
 
-
-        // background animation loop
+        // background animation loop. Only in webkit.
         var animateCloud = function() {
-          $body.animate({
+          $bg.animate({
             'background-position-x': '100%'
             }, 100000,
             'linear',
             function(){
-              $body.css('background-position-x', '0px');
+              $bg.css({'background-position-x': '0%'});
               animateCloud();
             });
         };
