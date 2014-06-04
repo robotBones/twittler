@@ -10,8 +10,8 @@
 
     <nav class='navbar navbar-default navbar-fixed-top'>
       <div class='container'>
-
         <div class='row'>
+
           <div class=' col-lg-3 col-md-3 col-sm-4'>
             <h1 class='brand'>Twittler</h1>
             <div class='glyphicon glyphicon-home home'></div>
@@ -60,7 +60,7 @@
         var $bg = $('body');
         var $overflow = $('html, body');
         var $feed = $('.feed');
-        var $home = $('.home');
+        var $homeBtn = $('.home');
         var $tweeter = $('.tweeter');
         var $toTop = $('.toTop');
         var $tweetPut = $('.tweet-put')
@@ -86,13 +86,13 @@
         });
 
         // click listener display @user's timeline
-        $feed.on('click', '.user', function(event){
+        $feed.on('click', '.user', function (event){
           event.preventDefault();
           // extract @user and remove "@"
           userToStalk = $(this).text().slice(1);
           // change the view
           inTimelineView = true;
-          $home.show();
+          $homeBtn.show();
           toTimelineView(userToStalk);
         });
 
@@ -111,7 +111,7 @@
 
           var input = $tweetPut.val();
           if (input === "") {
-            $tweetPut.attr('placeholder', "write something");
+            $tweetPut.attr('placeholder', "write something").focus();
           } else {
             writeTweet(input);
             // adding creation date to added date after it's tweet obj is created which
@@ -121,12 +121,19 @@
           }
         });
 
+        $tweetPut.on('keyup', function (event) {
+          event.stopPropagation();
+          if (event.keyCode === 13) { // Enter key
+            $sendBtn.click();
+          }
+        });
+
         // set inTimelineView to false, returning to main view
         var toHomeView = function() {
           inTimelineView = false;
           userToStalk = "";
           $tweeter.text("");
-          $home.hide();
+          $homeBtn.hide();
           displayTweets(streams.home);
         };
 
@@ -230,7 +237,7 @@
         }
 
         // invoking application
-        $home.hide();
+        $homeBtn.hide();
         displayTweets(streams.home);
         animateCloud();
         updateTweetView();
