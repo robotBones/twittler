@@ -13,6 +13,7 @@
         <div class='row'>
 
           <div class=' col-lg-3 col-md-3 col-sm-4'>
+            <span class='badge pending'></span>
             <h1 class='brand'>Twittler</h1>
             <div class='glyphicon glyphicon-home home'></div>
           </div> <!-- end of brand logo and home link -->
@@ -32,7 +33,6 @@
 
     <div class='row'>
       <div class=' flow col-lg-offset-5 col-lg-2'>
-        <span class='badge'></span>
         <div class='flowToggle glyphicon glyphicon-pause'></div>
       </div>
     </div>
@@ -74,6 +74,7 @@
         var $tweetPut = $('.tweet-put');
         var $sendBtn = $('.send');
         var $flowToggle = $('.flowToggle');
+        var $pending = $('.pending');
         var timeEls = document.getElementsByClassName('timeago');
         window.visitor = 'YourMom';
         streams.users[visitor] = [];
@@ -143,6 +144,10 @@
             .toggleClass('glyphicon-play')
             .toggleClass('glyphicon-pause');
           paused = (paused) ? false : true;
+        });
+
+        $pending.on('click', function() {
+          $flowToggle.click();
         });
 
         // set inTimelineView to false, returning to main view
@@ -241,6 +246,9 @@
                 showTweet(newTweet);
                 newest = [];
               }
+              _.isEmpty(newest)
+                ? $pending.text('')
+                : $pending.text(newest.length);
             });
             // update human readable timestamps every minute
             thisTime = new Date();
@@ -260,7 +268,7 @@
         // invoking application
         $homeBtn.hide();
         displayTweets(streams.home);
-        animateCloud();
+        // animateCloud();
         updateTweetView();
 
       });

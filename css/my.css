@@ -38,6 +38,7 @@ nav {
 }
 
 .flow {
+    position: relative;
     margin-top: 80px;
     text-align: center;
     -webkit-touch-callout: none;
@@ -49,6 +50,13 @@ nav {
 }
 .flow:hover {
     color: #428bca;
+}
+
+.pending {
+  position: fixed;
+  top: 13px;
+  left: 185px;
+  z-index: 2000;
 }
 
 .tweet-put-group {
