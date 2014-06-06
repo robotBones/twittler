@@ -30,11 +30,19 @@
       </div> <!-- end of container -->
     </nav> <!-- end of navbar -->
 
+    <div class='row'>
+      <div class=' flow col-lg-offset-5 col-lg-2'>
+        <span class='badge'></span>
+        <div class='flowToggle glyphicon glyphicon-pause'></div>
+      </div>
+    </div>
+
     <div class='main row'>
 
       <section class='timelineUser col-lg-3 col-md-3 col-sm-4'>
         <h2 class='tweeter'></h2>
       </section> <!-- end of timelineUser -->
+
 
       <section class='feed col-lg-6 col-md-6 col-sm-8'>
         <div class='tweet-box'>
@@ -63,8 +71,9 @@
         var $homeBtn = $('.home');
         var $tweeter = $('.tweeter');
         var $toTop = $('.toTop');
-        var $tweetPut = $('.tweet-put')
+        var $tweetPut = $('.tweet-put');
         var $sendBtn = $('.send');
+        var $flowToggle = $('.flowToggle');
         var timeEls = document.getElementsByClassName('timeago');
         window.visitor = 'YourMom';
         streams.users[visitor] = [];
@@ -72,6 +81,7 @@
         // keep track of view state.
         var inTimelineView = false;
         var userToStalk = "";
+        var paused = false;
 
         // cloning & caching HTML for template and then deleting original HTML from DOM
         // because mixing HTML in javascript confuses me.
@@ -126,6 +136,13 @@
           if (event.keyCode === 13) { // Enter key
             $sendBtn.click();
           }
+        });
+
+        $flowToggle.on('click',function() {
+          $(this)
+            .toggleClass('glyphicon-play')
+            .toggleClass('glyphicon-pause');
+          paused = (paused) ? false : true;
         });
 
         // set inTimelineView to false, returning to main view
@@ -210,15 +227,19 @@
         // main loop to update tweets in view
         var lastTime = new Date();
         var thisTime = new Date();
+        var newest = getLatestTweets();
         var updateTweetView = function() {
           setTimeout(function waitForTweet() {
-            var newest = getLatestTweets();
+            newest = newest.concat(getLatestTweets());
+            console.log(newest);
             // only show tweet if new.
             _(newest).each(function (newTweet) {
-              if (inTimelineView && newTweet.user === userToStalk) {
+              if (inTimelineView && newTweet.user === userToStalk && !paused) {
                 showTweet(newTweet);
-              } else if (!inTimelineView) {
+                newest = [];
+              } else if (!inTimelineView && !paused) {
                 showTweet(newTweet);
+                newest = [];
               }
             });
             // update human readable timestamps every minute
