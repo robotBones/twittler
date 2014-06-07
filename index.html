@@ -12,7 +12,7 @@
       <div class='container'>
         <div class='row'>
 
-          <div class=' col-lg-3 col-md-3 col-sm-4'>
+          <div class='brandDiv col-lg-3 col-md-3 col-sm-4'>
             <span class='badge pending'></span>
             <h1 class='brand'>Twittler</h1>
             <div class='glyphicon glyphicon-home home'></div>
@@ -166,6 +166,7 @@
         };
 
         // background animation loop. Only in webkit.
+        var point = 0;
         var animateCloud = function() {
           $bg.animate({
             'background-position-x': '100%'
@@ -236,12 +237,11 @@
         var updateTweetView = function() {
           setTimeout(function waitForTweet() {
             newest = newest.concat(getLatestTweets());
-            console.log(newest);
             // only show tweet if new.
-            _(newest).each(function (newTweet) {
+            _(newest).each(function (newTweet, index) {
               if (inTimelineView && newTweet.user === userToStalk && !paused) {
                 showTweet(newTweet);
-                newest = [];
+                newest.splice(index, 1);
               } else if (!inTimelineView && !paused) {
                 showTweet(newTweet);
                 newest = [];
@@ -268,7 +268,7 @@
         // invoking application
         $homeBtn.hide();
         displayTweets(streams.home);
-        // animateCloud();
+        animateCloud();
         updateTweetView();
 
       });
