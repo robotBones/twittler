@@ -64,7 +64,7 @@ nav {
 
 .flow {
   position: relative;
-  margin-top: 80px;
+  top: 10px;
   text-align: center;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -83,7 +83,7 @@ nav {
 }
 
 .main {
-  margin-top: 10px;
+  margin-top: 90px;
 }
 
 .feed > .tweet-box {
