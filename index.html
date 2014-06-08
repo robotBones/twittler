@@ -216,18 +216,23 @@
           });
         };
 
-        var mostRecent = streams.home.length-1;
+        var mostRecent = _.last(streams.home).created_at;
         var getLatestTweets = function() {
           var newTweets = [];
           for (var i = streams.home.length-1; i >= 0; i--) {
-            if (i > mostRecent) {
-              newTweets.unshift(streams.home[i]);
-              mostRecent++;
+            var tweet = streams.home[i];
+            if (tweet.created_at > mostRecent) {
+              newTweets.unshift(tweet);
             }
             else {
               break;
             }
           }
+          mostRecent =
+            _.isEmpty(newTweets)
+              ? mostRecent
+              : _.last(newTweets).created_at;
+
           return newTweets;
         };
 
