@@ -84,6 +84,8 @@
         var inTimelineView = false;
         var userToStalk = "";
         var paused = false;
+        var wantHome = false;
+        var wantTimeline = false;
 
         // cloning & caching HTML for template and then deleting original HTML from DOM
         // because mixing HTML in javascript confuses me.
@@ -102,17 +104,15 @@
           event.preventDefault();
           // extract @user and remove "@"
           userToStalk = $(this).text().slice(1);
-          // change the view
-          inTimelineView = true;
-          $homeBtn.show();
-          toTimelineView(userToStalk);
+          // set state for updateTweetView() to change the view
+          wantTimeline = true;
         });
 
         // links to go back to main home view and remove timeline view state.
         // it leverages the click listener already on $toTop.
         $('.brand, .home').on('click', function() {
           if (inTimelineView) {
-            toHomeView();
+            wantHome = true;
           }
           $toTop.click();
         });
@@ -120,15 +120,11 @@
         // for sending tweets
         $sendBtn.on('click', function (event) {
           event.preventDefault();
-
           var input = $tweetPut.val();
           if (input === "") {
             $tweetPut.attr('placeholder', "write something").focus();
           } else {
             writeTweet(input);
-            // adding creation date to added date after it's tweet obj is created which
-            // I think should have been in writeTweet() to begin with.
-            _.last(streams.users[visitor]).created_at = new Date();
             $tweetPut.attr('placeholder', "Please, may I have another?").val("").focus();
           }
         });
@@ -148,26 +144,36 @@
         });
 
         $pending.on('click', function() {
-          $flowToggle.click();
+          if (paused) { $flowToggle.click(); }
         });
 
         // set inTimelineView to false, returning to main view
         var toHomeView = function() {
-          inTimelineView = false;
+          // prep page
           userToStalk = "";
           $tweeter.text("");
           $homeBtn.hide();
-          displayTweets(streams.home);
+          // render tweets
+          displayAll(streams.home);
+          // set new states
+          inTimelineView = false;
+          wantHome = false;
         };
 
         // filter and display @user's tweet timeline
         var toTimelineView = function(tweeter) {
+          // prep page
           $tweeter.text(tweeter);
-            displayTweets(streams.users[tweeter]);
+          $homeBtn.show();
+          // render tweets
+          displayAll(streams.users[tweeter]);
+          // set new states
+          inTimelineView = true;
+          wantTimeline = false;
+
         };
 
         // background animation loop. Only in webkit.
-        var point = 0;
         var animateCloud = function() {
           $bg.animate({
             'background-position-x': '100%'
@@ -195,62 +201,78 @@
           $tweet.find('.user').text('@' + tweetObj.user);
           $tweet.find('.message').text(tweetObj.message);
           $tweet.find('.timeago')
-            .data("date", tweetObj.created_at)// this
+            .data("date", tweetObj.created_at)
             .text( useTimeago(tweetObj) );
           return $tweet;
         };
 
         // displaying initial tweets
-        var displayTweets = function(tweetCollection) {
-          $feed.html("");
+        var displayAll = function(tweetCollection) {
+          $feed.empty();
           _.each(tweetCollection, function (tweet) {
             var $tweet = buildTweet(tweet);
             $tweet.prependTo($feed);
           });
         };
 
-        var mostRecent = _.last(streams.home).created_at;
+        var mostRecent = streams.home.length-1;
         var getLatestTweets = function() {
           var newTweets = [];
           for (var i = streams.home.length-1; i >= 0; i--) {
-            if (streams.home[i].created_at > mostRecent) {
+            if (i > mostRecent) {
               newTweets.unshift(streams.home[i]);
+              mostRecent++;
             }
             else {
               break;
             }
           }
-          mostRecent = _.last(streams.home).created_at;
           return newTweets;
         };
 
         // animate in a new tweet
-        var showTweet = function(tweetObj) {
+        var showNew = function(tweetObj) {
           var tweetHTML = buildTweet(tweetObj);
           tweetHTML.prependTo($feed).hide();
-          tweetHTML.slideDown();
+          tweetHTML.slideDown('slow');
         }
 
         // main loop to update tweets in view
         var lastTime = new Date();
         var thisTime = new Date();
-        var newest = getLatestTweets();
+        var newest = [];
         var updateTweetView = function() {
-          setTimeout(function waitForTweet() {
+          var timeoutID = setTimeout(function waitForTweet() {
             newest = newest.concat(getLatestTweets());
             // only show tweet if new.
-            _(newest).each(function (newTweet, index) {
-              if (inTimelineView && newTweet.user === userToStalk && !paused) {
-                showTweet(newTweet);
-                newest.splice(index, 1);
-              } else if (!inTimelineView && !paused) {
-                showTweet(newTweet);
+            var twt = newest.length-1;
+            for (twt; twt >= 0; twt--) {
+              if (wantHome) {
+                // toHomeView() displays all tweets so newest is reset and traversion through newest breaks out
                 newest = [];
+                toHomeView();
+                break;
+
+              } else if (wantTimeline) {
+                toTimelineView(userToStalk);
+                break;
+
+              } else if (_.isEmpty(newest)) {
+                break;
+
+              } else if (inTimelineView && newest[twt].user === userToStalk && !paused) {
+                showNew(newest[twt]);
+                newest.splice(twt, 1);
+
+              } else if (!inTimelineView && !paused) {
+                showNew(newest[twt]);
+                newest.splice(twt, 1);
               }
-              _.isEmpty(newest)
-                ? $pending.text('')
-                : $pending.text(newest.length);
-            });
+            }
+            // update counter of tweets pending display
+            _.isEmpty(newest)
+              ? $pending.text('')
+              : $pending.text(newest.length);
             // update human readable timestamps every minute
             thisTime = new Date();
             if (thisTime - lastTime >= 60000) {
@@ -262,13 +284,14 @@
                 lastTime = thisTime;
               });
             }
+            clearTimeout(timeoutID);
             updateTweetView();
-          }, 1000);
+          }, 50);
         }
 
         // invoking application
         $homeBtn.hide();
-        displayTweets(streams.home);
+        displayAll(streams.home);
         animateCloud();
         updateTweetView();
 
