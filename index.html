@@ -120,6 +120,7 @@
         // for sending tweets
         $sendBtn.on('click', function (event) {
           event.preventDefault();
+          event.stopPropagation();
           var input = $tweetPut.val();
           if (input === "") {
             $tweetPut.attr('placeholder', "write something").focus();
@@ -131,7 +132,7 @@
 
         $tweetPut.on('keyup', function (event) {
           event.stopPropagation();
-          if (event.keyCode === 13) { // Enter key
+          if (event.which === 13) { // Enter key
             $sendBtn.click();
           }
         });
