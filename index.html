@@ -178,15 +178,20 @@
         };
 
         // background animation loop. Only in webkit.
-        var animateCloud = function() {
-          $bg.animate({
-            'background-position-x': '100%'
-            }, 100000,
-            'linear',
-            function(){
-              $bg.css({'background-position-x': '0%'});
-              animateCloud();
-            });
+        var xpos = 0;
+        var startx = +new Date();
+        var nowx = +new Date();
+        var poop;
+        var animateCloud = function(tick) {
+          var tID = setTimeout(function() {
+            nowx = +new Date();
+            var passed = nowx - startx;
+            xpos = 100 * ((passed % 60000) / 60000);
+            xpos = (xpos >= 100) ? 0 : xpos;
+            document.body.style.backgroundPosition = xpos+"% 75px";
+            clearTimeout(tID);
+            animateCloud(poop);
+          }, 30);
         };
 
         // implement human readable time stamps via timeago.js
