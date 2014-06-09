@@ -105,7 +105,7 @@
           event.preventDefault();
           // extract @user and remove "@"
           userToStalk = $(this).text().slice(1);
-          // set state for updateTweetView() to change the view
+          // set signal for updateTweetView() to change the view
           wantTimeline = true;
         });
 
@@ -269,8 +269,6 @@
                 showNew(twt);
               }
             });
-
-            newest = [];
 
             // update counter of tweets pending display
             if (inTimelineView) {
